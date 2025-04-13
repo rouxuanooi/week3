@@ -33,9 +33,8 @@ app.listen(port, ()=>{
 // CREATE a new user
 app.post('/users', async (req, res) => {
   try {
-    const { username, email, password } = req.body;
-    const result = await db.collection('users').insertOne({ username, email, password });
-    res.status(201).json({ insertedId: result.insertedId });
+    const result = await db.collection('users').insertOne(req.body );
+    res.status(201).json({ id: result.insertedId });
   } catch (err) {
     res.status(400).json({ error: 'Failed to create user' });
   }
@@ -65,10 +64,9 @@ app.get('/users/:id', async (req, res) => {
 // UPDATE user by ID
 app.put('/users/:id', async (req, res) => {
   try {
-    const { username, email, password } = req.body;
     const result = await db.collection('users').updateOne(
       { _id: new ObjectId(req.params.id) },
-      { $set: { username, email, password } }
+      { $set: { status:req.body.status } }
     );
     if (result.modifiedCount === 0) {
       return res.status(404).json({ error: 'User not found or data unchanged' });
